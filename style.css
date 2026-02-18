@@ -1,0 +1,580 @@
+/* ===========================
+   OMIKUJI — CSS
+   Aesthetic: Wabi-sabi refined
+   =========================== */
+
+:root {
+  --ink: #1a1208;
+  --ink-faded: #3d2b1a;
+  --paper: #f5ede0;
+  --paper-dark: #e8d9c4;
+  --paper-cream: #faf4eb;
+  --vermilion: #c0392b;
+  --vermilion-dark: #922b21;
+  --gold: #b8860b;
+  --gold-light: #d4a030;
+  --sage: #5a7a5a;
+  --indigo: #2c3e6b;
+  --blush: #e8c4b8;
+  --shadow: rgba(26,18,8,0.2);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: #1a1208;
+  color: var(--ink);
+  font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Noise overlay */
+.noise {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+  opacity: 0.4;
+}
+
+/* Paper texture background */
+.paper-texture {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(184,134,11,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 70%, rgba(192,57,43,0.05) 0%, transparent 60%),
+    linear-gradient(160deg, #2b1d0e 0%, #1a1208 40%, #0e0c08 100%);
+}
+
+/* ===========================
+   PETALS
+   =========================== */
+.petals { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.petal {
+  position: absolute;
+  width: 8px; height: 10px;
+  background: radial-gradient(ellipse at 40% 30%, #ffb3c1, #e8789a 60%, #c0392b);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  opacity: 0;
+  animation: petalFall linear infinite;
+}
+@keyframes petalFall {
+  0%   { transform: translateY(-20px) rotate(0deg) translateX(0); opacity: 0; }
+  5%   { opacity: 0.7; }
+  90%  { opacity: 0.4; }
+  100% { transform: translateY(110vh) rotate(720deg) translateX(60px); opacity: 0; }
+}
+
+/* ===========================
+   HEADER
+   =========================== */
+.site-header {
+  position: relative; z-index: 10;
+  text-align: center;
+  padding: 3rem 1rem 2rem;
+  border-bottom: 1px solid rgba(184,134,11,0.2);
+}
+
+.header-kanji {
+  font-family: 'Noto Serif JP', serif;
+  font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+  letter-spacing: 0.4em;
+  color: rgba(212,160,48,0.5);
+  margin-bottom: 0.5rem;
+}
+
+.site-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-weight: 200;
+  color: var(--paper);
+  line-height: 1;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.romanji {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1rem, 3vw, 1.8rem);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--gold-light);
+  letter-spacing: 0.1em;
+}
+
+.subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(0.75rem, 2vw, 1rem);
+  font-weight: 300;
+  color: rgba(245,237,224,0.45);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-top: 0.75rem;
+}
+
+/* ===========================
+   INTRO SECTION
+   =========================== */
+.intro {
+  position: relative; z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 1.5rem 5rem;
+  min-height: 70vh;
+  justify-content: center;
+  gap: 3rem;
+}
+
+/* Torii Gate */
+.torii { position: relative; width: 160px; height: 140px; margin: 0 auto; }
+.torii-top {
+  position: absolute; top: 0; left: -20px; right: -20px; height: 14px;
+  background: var(--vermilion);
+  border-radius: 4px 4px 0 0;
+  box-shadow: 0 -6px 0 0 var(--vermilion);
+}
+.torii-top::before {
+  content: '';
+  position: absolute; bottom: -8px; left: -8px; right: -8px; height: 8px;
+  background: var(--vermilion-dark);
+}
+.torii-crossbar {
+  position: absolute; top: 34px; left: -8px; right: -8px; height: 10px;
+  background: var(--vermilion);
+  border-radius: 2px;
+}
+.torii-pillar {
+  position: absolute; bottom: 0; width: 12px; height: 106px;
+  background: linear-gradient(to right, var(--vermilion-dark), var(--vermilion), var(--vermilion-dark));
+  border-radius: 3px;
+}
+.torii-pillar.left { left: 20px; }
+.torii-pillar.right { right: 20px; }
+
+.shrine-gate { animation: floatGate 6s ease-in-out infinite; }
+@keyframes floatGate {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+.intro-text { text-align: center; max-width: 520px; }
+
+.intro-desc {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  color: rgba(245,237,224,0.7);
+  line-height: 1.9;
+  font-weight: 300;
+  margin-bottom: 3rem;
+}
+.intro-desc em { font-style: italic; color: var(--gold-light); }
+
+.draw-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  background: none;
+  border: 1.5px solid var(--vermilion);
+  color: var(--paper);
+  cursor: pointer;
+  padding: 1.2rem 3.5rem;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+.draw-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--vermilion);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.4s ease;
+  z-index: -1;
+}
+.draw-btn:hover::before { transform: scaleY(1); }
+.draw-btn:hover { border-color: var(--vermilion); box-shadow: 0 0 30px rgba(192,57,43,0.4); }
+.draw-btn:active { transform: scale(0.97); }
+
+.btn-kanji {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.1rem;
+  font-weight: 300;
+  letter-spacing: 0.3em;
+}
+.btn-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+/* ===========================
+   SHAKING SCREEN
+   =========================== */
+.shaking-screen {
+  position: relative; z-index: 10;
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 4rem 1rem;
+}
+
+.cylinder-wrap { perspective: 600px; }
+
+.cylinder {
+  position: relative;
+  width: 80px;
+  animation: shake 0.15s ease-in-out infinite;
+}
+@keyframes shake {
+  0%   { transform: rotate(-6deg); }
+  50%  { transform: rotate(6deg); }
+  100% { transform: rotate(-6deg); }
+}
+
+.cylinder-top {
+  width: 80px; height: 16px;
+  background: radial-gradient(ellipse at 50% 30%, #8b6914, #5a4009);
+  border-radius: 50%;
+  position: relative; z-index: 3;
+}
+.cylinder-hole {
+  width: 24px; height: 12px;
+  background: #1a1208;
+  border-radius: 50%;
+  position: absolute; top: 4px; left: 50%; transform: translateX(-50%);
+  z-index: 4;
+}
+.cylinder-body {
+  width: 80px; height: 140px;
+  background: linear-gradient(to right, #5a4009, #8b6914 30%, #c8960a 50%, #8b6914 70%, #5a4009);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.stick-container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-end;
+  height: 100%;
+  padding: 10px 8px;
+}
+
+.stick {
+  width: 4px;
+  background: linear-gradient(to bottom, #f0dba0, #c8960a);
+  border-radius: 2px 2px 0 0;
+  animation: stickBounce 0.2s ease-in-out infinite alternate;
+}
+.stick:nth-child(even) { animation-delay: 0.1s; }
+
+@keyframes stickBounce {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-8px); }
+}
+
+.shake-hint {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: rgba(245,237,224,0.5);
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+/* ===========================
+   RESULT SCREEN
+   =========================== */
+.result-screen {
+  position: relative; z-index: 10;
+  padding: 3rem 1rem 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Omikuji slip */
+.omikuji-slip {
+  background: var(--paper-cream);
+  color: var(--ink);
+  width: 100%;
+  max-width: 480px;
+  padding: 2.5rem 2rem;
+  box-shadow:
+    0 4px 6px var(--shadow),
+    0 20px 60px rgba(0,0,0,0.5),
+    inset 0 0 40px rgba(184,134,11,0.05);
+  position: relative;
+  animation: slipReveal 0.8s cubic-bezier(0.22,1,0.36,1) forwards;
+  transform-origin: top center;
+}
+.omikuji-slip::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 5px;
+  background: linear-gradient(to right, var(--vermilion-dark), var(--vermilion), var(--vermilion-dark));
+}
+
+@keyframes slipReveal {
+  from { opacity: 0; transform: scaleY(0.1) translateY(-20px); }
+  to   { opacity: 1; transform: scaleY(1) translateY(0); }
+}
+
+.slip-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.slip-number {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 2.5rem;
+  font-weight: 200;
+  color: rgba(26,18,8,0.15);
+  min-width: 3rem;
+  text-align: center;
+  line-height: 1;
+}
+
+.slip-title-block { flex: 1; }
+
+.fortune-kanji {
+  font-family: 'Noto Serif JP', serif;
+  font-size: clamp(3rem, 10vw, 4.5rem);
+  font-weight: 200;
+  line-height: 1;
+  color: var(--vermilion);
+}
+
+.fortune-romaji {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--ink-faded);
+  letter-spacing: 0.1em;
+  margin-top: 0.2rem;
+}
+
+.fortune-english {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.05em;
+  margin-top: 0.1rem;
+}
+
+.divider-ornament {
+  text-align: center;
+  color: var(--gold);
+  font-size: 1.3rem;
+  margin: 1rem 0;
+  opacity: 0.6;
+}
+
+/* Verse */
+.verse-block { margin: 1rem 0; }
+
+.verse-japanese {
+  font-family: 'Noto Serif JP', serif;
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  font-weight: 300;
+  line-height: 2.2;
+  letter-spacing: 0.15em;
+  color: var(--ink);
+  text-align: center;
+  padding: 0.5rem;
+  border-left: 2px solid var(--vermilion);
+  border-right: 2px solid var(--vermilion);
+  margin: 0 1rem;
+}
+
+.verse-reading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: rgba(26,18,8,0.5);
+  text-align: center;
+  margin-top: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.verse-translation {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1rem, 2.5vw, 1.15rem);
+  color: var(--ink-faded);
+  line-height: 1.8;
+  text-align: center;
+  margin-top: 0.75rem;
+  font-style: italic;
+  padding: 0 0.5rem;
+}
+
+/* Aspects grid */
+.aspects-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.aspect-item {
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid rgba(26,18,8,0.1);
+}
+
+.aspect-label {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(26,18,8,0.45);
+  margin-bottom: 0.2rem;
+}
+
+.aspect-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--ink);
+  font-weight: 400;
+}
+
+.aspect-value.good { color: var(--sage); }
+.aspect-value.bad  { color: var(--vermilion); }
+.aspect-value.neutral { color: var(--indigo); }
+
+/* Slip footer */
+.slip-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(26,18,8,0.1);
+}
+.footer-kanji {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  color: rgba(26,18,8,0.3);
+}
+.footer-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: rgba(26,18,8,0.25);
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+}
+
+/* Actions */
+.result-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.action-btn {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.8rem 2rem;
+  cursor: pointer;
+  border: 1.5px solid;
+  transition: all 0.3s ease;
+  background: none;
+}
+.action-btn.primary {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+.action-btn.primary:hover {
+  background: var(--gold);
+  color: var(--ink);
+}
+.action-btn.secondary {
+  border-color: rgba(245,237,224,0.3);
+  color: rgba(245,237,224,0.6);
+}
+.action-btn.secondary:hover {
+  border-color: rgba(245,237,224,0.7);
+  color: var(--paper);
+}
+
+.tie-note {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  color: rgba(245,237,224,0.45);
+  text-align: center;
+  max-width: 400px;
+  line-height: 1.7;
+}
+
+/* ===========================
+   FOOTER
+   =========================== */
+.site-footer {
+  position: relative; z-index: 10;
+  text-align: center;
+  padding: 2rem 1rem;
+  border-top: 1px solid rgba(184,134,11,0.15);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.8rem;
+  color: rgba(245,237,224,0.25);
+  letter-spacing: 0.05em;
+  line-height: 1.7;
+}
+
+/* ===========================
+   FORTUNE TYPE COLORS
+   =========================== */
+.fortune-daikichi .fortune-kanji  { color: var(--gold); }
+.fortune-kichi .fortune-kanji     { color: var(--sage); }
+.fortune-chukichi .fortune-kanji  { color: #4a8a6a; }
+.fortune-shokichi .fortune-kanji  { color: var(--indigo); }
+.fortune-hankichi .fortune-kanji  { color: #7a6a3a; }
+.fortune-suekichi .fortune-kanji  { color: #7a5a3a; }
+.fortune-sueshokichi .fortune-kanji { color: #6a5030; }
+.fortune-kyo .fortune-kanji       { color: var(--vermilion); }
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+@media (max-width: 480px) {
+  .slip-header { flex-direction: column; text-align: center; gap: 0.5rem; }
+  .slip-number { font-size: 1.5rem; }
+  .aspects-grid { grid-template-columns: 1fr; }
+  .verse-japanese { margin: 0; }
+}
+
+/* ===========================
+   TRANSITION FADE
+   =========================== */
+.fade-out {
+  animation: fadeOut 0.5s ease forwards;
+}
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+@keyframes fadeOut {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.97); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
