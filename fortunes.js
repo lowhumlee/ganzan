@@ -59,7 +59,7 @@ const FORTUNES = [
     verse: {
       japanese: '春の花　咲き誇りつつ　天の恵み\n願うこと　みな叶うなり　この御籤',
       reading:  'Haru no hana / sakihokoritsu / ten no megumi / negau koto / mina kanau nari / kono mikuji',
-      english:  'Spring blossoms bloom in full glory — heaven's grace abounds. All that you wish shall come to pass; this sacred lot proclaims it so.',
+      english:  'Spring blossoms bloom in full glory — heaven\u2019s grace abounds. All that you wish shall come to pass; this sacred lot proclaims it so.',
     },
     aspects: {
       wish:      { text: 'Will be fulfilled',          rating: 'good'    },
