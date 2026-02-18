@@ -50,8 +50,7 @@ function createSticks() {
 // ===========================
 function pickFortune() {
   // Weighted distribution matching traditional Ganzan Daishi Hyakusen
-  // The distribution across 100 sticks (approximate):
-  // 大吉 17, 吉 14 (but some sources say fewer), 中吉 12, 小吉 13, 半吉 10, 末吉 12, 末小吉 8, 凶 14
+  // Build a pool directly from FORTUNES entries so we never get undefined.
   const weights = {
     daikichi:    17,
     kichi:       14,
@@ -63,22 +62,22 @@ function pickFortune() {
     kyo:         14,
   };
 
+  // Each fortune is added to the pool N times based on its type weight.
+  // This guarantees we always pick an actual fortune object.
   const weightedPool = [];
-  FORTUNES.forEach(f => {
-    const w = weights[f.type] || 1;
-    // Each fortune gets added proportionally; we scale to fortune count
-    weightedPool.push(f);
+  FORTUNES.forEach(function(fortune) {
+    const w = weights[fortune.type] || 1;
+    for (let i = 0; i < w; i++) {
+      weightedPool.push(fortune);
+    }
   });
 
-  // Weighted random pick by type frequency
-  const typePool = [];
-  Object.entries(weights).forEach(([type, w]) => {
-    for (let i = 0; i < w; i++) typePool.push(type);
-  });
+  // Absolute safety fallback
+  if (!weightedPool.length) {
+    return FORTUNES[Math.floor(Math.random() * FORTUNES.length)];
+  }
 
-  const rolledType = typePool[Math.floor(Math.random() * typePool.length)];
-  const ofType = FORTUNES.filter(f => f.type === rolledType);
-  return ofType[Math.floor(Math.random() * ofType.length)];
+  return weightedPool[Math.floor(Math.random() * weightedPool.length)];
 }
 
 // ===========================
@@ -93,8 +92,8 @@ function renderFortune(fortune) {
   slip.classList.add(typeInfo.class);
 
   document.getElementById('slipNumber').textContent = fortune.number;
-  document.getElementById('fortuneKanji').textContent  = typeInfo.kanji;
-  document.getElementById('fortuneRomaji').textContent = typeInfo.romaji;
+  document.getElementById('fortuneKanji').textContent   = typeInfo.kanji;
+  document.getElementById('fortuneRomaji').textContent  = typeInfo.romaji;
   document.getElementById('fortuneEnglish').textContent = typeInfo.english;
 
   document.getElementById('verseJapanese').textContent    = fortune.verse.japanese;
@@ -104,15 +103,14 @@ function renderFortune(fortune) {
   // Aspects
   const grid = document.getElementById('aspectsGrid');
   grid.innerHTML = '';
-  ASPECTS.forEach(aspect => {
+  ASPECTS.forEach(function(aspect) {
     const data = fortune.aspects[aspect.key];
     if (!data) return;
     const div = document.createElement('div');
     div.classList.add('aspect-item');
-    div.innerHTML = `
-      <div class="aspect-label">${aspect.label}</div>
-      <div class="aspect-value ${data.rating}">${data.text}</div>
-    `;
+    div.innerHTML =
+      '<div class="aspect-label">' + aspect.label + '</div>' +
+      '<div class="aspect-value ' + data.rating + '">' + data.text + '</div>';
     grid.appendChild(div);
   });
 
@@ -123,14 +121,15 @@ function renderFortune(fortune) {
 // ===========================
 // STATE MACHINE
 // ===========================
-let currentFortune = null;
+var currentFortune = null;
 
 function showSection(id) {
-  ['intro', 'shakingScreen', 'resultScreen'].forEach(s => {
-    const el = document.getElementById(s);
-    el.style.display = 'none';
+  ['intro', 'shakingScreen', 'resultScreen'].forEach(function(s) {
+    var el = document.getElementById(s);
+    if (el) el.style.display = 'none';
   });
-  document.getElementById(id).style.display = '';
+  var target = document.getElementById(id);
+  if (target) target.style.display = '';
 }
 
 function drawOmikuji() {
@@ -138,29 +137,44 @@ function drawOmikuji() {
   createSticks();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // Shaking animation duration
-  const shakeDuration = 2000 + Math.random() * 1200;
+  // Shaking animation duration: 2.0 – 3.2 seconds
+  var shakeDuration = 2000 + Math.random() * 1200;
 
-  setTimeout(() => {
-    currentFortune = pickFortune();
-    renderFortune(currentFortune);
+  setTimeout(function() {
+    try {
+      currentFortune = pickFortune();
+      if (!currentFortune) {
+        throw new Error('pickFortune returned nothing');
+      }
+      renderFortune(currentFortune);
+    } catch (err) {
+      console.error('Omikuji render error:', err);
+      // Hard fallback: use the very first fortune so we never stay stuck
+      currentFortune = FORTUNES[0];
+      try { renderFortune(currentFortune); } catch(e2) { console.error(e2); }
+    }
     showSection('resultScreen');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, shakeDuration);
 }
 
 function resetApp() {
+  currentFortune = null;
   showSection('intro');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function shareResult() {
   if (!currentFortune) return;
-  const typeInfo = FORTUNE_TYPES[currentFortune.type];
-  const text = `🎋 My Omikuji (元三大師百籤) result:\n${typeInfo.kanji} — ${typeInfo.english} (${typeInfo.romaji})\n\n"${currentFortune.verse.english}"\n\nTry your luck at the Ganzan Daishi Hyakusen Omikuji app!`;
+  var typeInfo = FORTUNE_TYPES[currentFortune.type];
+  var text = '\uD83C\uDF8B My Omikuji (\u5143\u4E09\u5927\u5E2B\u767E\u7C3D) result:\n' +
+    typeInfo.kanji + ' \u2014 ' + typeInfo.english + ' (' + typeInfo.romaji + ')\n\n' +
+    '"' + currentFortune.verse.english + '"\n\n' +
+    'Try your luck at the Ganzan Daishi Hyakusen Omikuji app!';
 
   if (navigator.share) {
-    navigator.share({ title: 'My Omikuji Fortune', text }).catch(() => fallbackCopy(text));
+    navigator.share({ title: 'My Omikuji Fortune', text: text })
+      .catch(function() { fallbackCopy(text); });
   } else {
     fallbackCopy(text);
   }
@@ -168,38 +182,37 @@ function shareResult() {
 
 function fallbackCopy(text) {
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('Fortune copied to clipboard!');
-    }).catch(() => showToast('Could not copy'));
+    navigator.clipboard.writeText(text)
+      .then(function() { showToast('Fortune copied to clipboard!'); })
+      .catch(function() { showToast('Could not copy to clipboard'); });
   } else {
-    showToast('Share: ' + text.substring(0, 40) + '…');
+    showToast('Share: ' + text.substring(0, 60) + '\u2026');
   }
 }
 
 function showToast(msg) {
-  let toast = document.getElementById('toast');
+  var toast = document.getElementById('toast');
   if (!toast) {
     toast = document.createElement('div');
     toast.id = 'toast';
-    toast.style.cssText = `
-      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
-      background: rgba(245,237,224,0.95); color: #1a1208;
-      padding: 0.75rem 1.5rem; font-family: 'Cormorant Garamond', serif;
-      font-size: 1rem; z-index: 999; border-radius: 2px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-      transition: opacity 0.3s ease;
-    `;
+    toast.style.cssText = [
+      'position:fixed', 'bottom:2rem', 'left:50%', 'transform:translateX(-50%)',
+      'background:rgba(245,237,224,0.95)', 'color:#1a1208',
+      'padding:0.75rem 1.5rem', "font-family:'Cormorant Garamond',serif",
+      'font-size:1rem', 'z-index:999', 'border-radius:2px',
+      'box-shadow:0 4px 20px rgba(0,0,0,0.3)', 'transition:opacity 0.3s ease'
+    ].join(';');
     document.body.appendChild(toast);
   }
   toast.textContent = msg;
   toast.style.opacity = '1';
-  setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+  setTimeout(function() { toast.style.opacity = '0'; }, 3000);
 }
 
 // ===========================
 // INIT
 // ===========================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
   createPetals();
   showSection('intro');
 });
