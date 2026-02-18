@@ -89,7 +89,7 @@ function renderFortune(fortune) {
 
   // Remove any previous fortune class
   slip.className = 'omikuji-slip';
-  slip.classList.add(typeInfo.class);
+  slip.classList.add(typeInfo.cls);
 
   document.getElementById('slipNumber').textContent = fortune.number;
   document.getElementById('fortuneKanji').textContent   = typeInfo.kanji;
